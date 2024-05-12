@@ -1,0 +1,15 @@
+{
+  "name": "jsxy",
+  "version": "0.1.0",
+  "description": "JSX for functional components with hooks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bill Ticehurst <billti@hotmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/billti/jsxy"
+  }
+}
