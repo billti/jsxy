@@ -15,13 +15,18 @@ blogs and tutorials on how similar frameworks are implemented.
 Note: This does not support the newer 'jsx' transform introduced in React 17.
 To use in TypeScript for example, set the compiler options to:
 
-        "jsx": "react",
-        "jsxFactory": "h",
-        "jsxFragmentFactory": "Fragment"
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
 
 And then in .tsx files you would explicitly import the functions needed, e.g.
 
     import {h, Fragment, render} from "jsxy";
 
     // Assume MyApp and 'bar' are defined somewhere
-    render(<MyApp foo={bar} />, document.body);
+    render((
+      <>
+        <h1>My app</h1>
+        <MyApp foo={bar} />
+      </>),
+      document.body);
