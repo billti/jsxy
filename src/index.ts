@@ -1,23 +1,6 @@
 // Copyright (c) Bill Ticehurst
 // Licensed under the MIT License.
 
-// Minimal React-like rendering engine supporting only functional components and
-// the useState, useEffect, useMemo, and useRef hooks.
-//
-// Written for my own education. Its goal is not to be fast, but it does aim to
-// be correct and comprehensible. It is based of reading the Preact code.
-//
-// Note: This does not support the newer 'jsx' transform introduced in React 17.
-// To use in TypeScript for example, set the compiler options to:
-//
-//         "jsx": "react",
-//         "jsxFactory": "h",
-//         "jsxFragmentFactory": "Fragment"
-//
-// And then in .tsx files you would explicitly import the functions needed, e.g.
-//
-//     import {h, Fragment, render} from "jsxy";
-
 type Component = (props: Props) => VNode; // Signature for a functional component
 type Tag = Component | string;            // A component function, or a string such as "div"
 type Props = { [index: string]: any };    // The set of properties passed to a component
