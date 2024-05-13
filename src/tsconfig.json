@@ -2,6 +2,7 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "isolatedModules": true,
+        "types": [],
         "target": "ES2022",
         "module": "ES2022",
         "outDir": "../",

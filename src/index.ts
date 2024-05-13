@@ -64,17 +64,7 @@ export function h(
   }
 
   // The children args become the 'children' value on the props.
-  // If more than 1, it becomes and array, else it's just the child value directly
-  switch (children.length) {
-    case 0:
-      // Already initialized
-      break;
-    case 1:
-      props.children = children[0];
-      break;
-    default:
-      props.children = children;
-  }
+  normalizedProps.children = children;
 
   return {
     type,
