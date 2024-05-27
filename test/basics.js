@@ -6,7 +6,9 @@
 import assert from "node:assert";
 import { test } from "node:test";
 
-import { h } from "../index.js";
+import { h, render, setMockWindow } from "../index.js";
+
+import {JSDOM} from "jsdom";
 
 test('h created a vdom node', () => {
     // <h1>Hello, world</h1> => h("h1", null, "Hello, world")
@@ -38,6 +40,24 @@ test('h created a vdom node', () => {
             h("br", null),
             " get 7"));
     */
+
+});
+
+const htmlDoc = `<!DOCTYPE html>
+<html lang="en">
+<head> </head>
+<body></body>
+</html>`;
+
+test('renders a basic div', () => {
+    const dom = new JSDOM(htmlDoc, {runScripts: "dangerously"});
+    /** @type {any} */
+    const mock = dom.window;
+    setMockWindow(mock);
+    
+    const body = dom.window.document.body;
+    const div = h("div", null, "Hello, world");
+    render(div, body);
 
 });
 

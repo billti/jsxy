@@ -1,5 +1,17 @@
 # Implementation notes
 
+## TODO
+
+- Diffing of children
+- Functional component implementation
+- useState hook
+- useRef and useEffect hooks
+- Richer logging & error handling
+- Support for element keys
+- useMemo and useCallback hook
+- useContext hook
+- jsx/runtime support
+
 ## Fragments and siblings
 
 An interesting consideration is how to render sibling fragments, for example, if
@@ -38,7 +50,7 @@ as what needs to happen after a call to setState within it in some handler. So b
 
 If you know the props and state haven't changed for a component, then should you
 run it again at all when rendering parent elements? According to some docs, all children
-are invoked again when a parent component runs, but I'm not sure why that's needed. 
+are invoked again when a parent component runs, but I'm not sure why that's needed.
 If it is purely functional, seems like the vdom should be identical if the state is. Is
 it to avoid holding a reference to the props passed in? Seems like hooks that track
 dependencies need to hold a reference to the old values here anyway. Or maybe it's in
@@ -59,4 +71,60 @@ so it's creating the vdom at this point, thus can't be related to the real DOM i
 
 It must be tracked on the old vdom for subsequent renders. Looks like some internal
 variable is set to the current 'node' as each node is called. Maybe this is the 'fiber'
-which is talked about in some docs. 
+which is talked about in some docs.
+
+## How about children surrounded by other nodes
+
+For example, if I have the below:
+
+    return (<div>
+      <span>A</span>
+      <Foo />
+      <span>A</span>
+    </div>);
+  
+When it comes time to render Foo into the parent div, I believe the surrounding spans
+have already been created. So it can't just 'appendChild', it has to know which sibling
+it is. How? Is this similar to the sibling fragments problem above?
+
+## Mismatched keys
+
+Another challenge is keys. When you start rendering a child node, how to handle if
+some children have keys and some don't?
+
+Seems once you have the new vnode tree, just start iterating through the new nodes.
+
+- If a child has a key, look for it in the old tree. If found, move/splice it to match the new position.
+  - Need to move the old DOM node too?
+- If a child has a key, but the old tree doesn't have it, create/insert a new node/DOM at that spot.
+- Delete any remaining nodes in the old tree where the key didn't match.
+- How about if some children have keys and some don't? Is that possible? Easy to handle?
+
+## Mid-tree re-render
+
+If you have a structure
+
+    <div>
+      <Foo>
+        <Bar>
+        <Baz>
+
+And Baz needs to re-render, how does it know into where? Who knows how many parent
+nodes Foo introduced, or how many nodes Bar added? Every component is rending into
+some parent host element somewhere, so if it tracks its parent DOM, and its prior
+sibling (if any), then it will know at which point to start rendering.
+
+## Does every component need to render something?
+
+No. It can return null, and results in nothing being added. Interestingly, it will
+still need a component instance in the vnode tree, as it could react to some state
+change and rending something at a later point. (Does that mean it also still needs
+to track parent DOM and prior sibling). In this case, how would a subsequent sibling
+know what it's prior sibling is if it didn't use to exist, and now it does? Maybe
+it should keep track of it prior sibling component, not DOM node. If that doesn't
+have a DOM node, check ITS prior sibling, and repeat until a prior DOM node is found
+or no prior component.
+
+## Preact differences
+
+- Preact has special handling for `[default]Value` and `[default]Checked` for some reason. Removed those.

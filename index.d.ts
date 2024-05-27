@@ -1,7 +1,10 @@
 type Component = (props: Props) => VNode;
-type Tag = Component | string;
+type Tag = Component | string | null;
 type Props = {
     [index: string]: any;
+};
+type NormalizedProps = Props & {
+    children: Children;
 };
 type Children = any[];
 type RefObj = {
@@ -10,16 +13,15 @@ type RefObj = {
 type RefCallback = (el: Element) => void;
 type VNode = {
     type: Tag;
-    props: Props & {
-        children: Children;
-    };
+    props: NormalizedProps;
     key: string | number | null;
     ref?: RefObj | RefCallback;
     _children?: any;
     _parent?: VNode;
-    _dom?: Element;
-    _domSibling?: Element;
+    _dom?: Node;
+    _domSibling?: Node;
 };
+export declare function setMockWindow(mock: Window): void;
 /**
  * The JSX syntax gets compiled into calls to 'h'. For example, the JSX code
  * `return <div><h1>{3 + 4}</h1></div>` becomes the code:
@@ -43,15 +45,16 @@ export declare function h(type: Tag, props: Props | null, ...children: Children)
 /**
  * Used in the <>...</> syntax calls as the parent. For example, the source code:
  *
- *     <><h1>{appName}</h1><Foo id='test'/></>
+ *     <><h1>{appName}</h1>Some interim text<Foo id='test'/></>
  *
  * Gets compiled into:
  *
  *     h(Fragment, null,
  *       h("h1", null, appName),
+ *       "Some interim text",
  *       h(Foo, { id: 'test' }))
  */
-export declare function Fragment(props: any): any;
+export declare function Fragment(props: NormalizedProps): Children;
 /**
  * Used to render a component into an HTML element, e.g.
  *
@@ -59,7 +62,8 @@ export declare function Fragment(props: any): any;
  */
 export declare function render(vnode: VNode, parentElem: HTMLElement): void;
 export declare function useState(): void;
+export declare function useRef(): void;
 export declare function useEffect(): void;
 export declare function useMemo(): void;
-export declare function useRef(): void;
+export declare function useCallback(): void;
 export {};
